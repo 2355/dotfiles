@@ -38,6 +38,8 @@ defaults write com.apple.dock autohide-delay -float 0.1
 #----------------------------------------------------------
 # Others
 #----------------------------------------------------------
+# ダークモードを有効にする
+defaults write -g AppleInterfaceStyle -string "Dark"
 # スクリーンショットの保存先をダウンロードフォルダに変更する
 defaults write com.apple.screencapture location ~/Downloads
 
