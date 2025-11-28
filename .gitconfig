@@ -1,0 +1,7 @@
+[ghq]
+	root = ~/work
+[user]
+	name = 2355
+	email = mitkit.a01@gmail.com
+[init]
+	defaultBranch = main
