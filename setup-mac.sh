@@ -114,10 +114,13 @@ echo "✅ setup complete!"
 #----------------------------------------------------------
 # その他手動対応
 #----------------------------------------------------------
-# キーボード > キーボードショートカット > Spotlight で「Spotlight検索を表示」 を OFF
-# キーボード > キーボードショートカット > 修飾キー で 「Caps Lock」→「Command」に変更
-# コントロールセンター > バッテリー で「割合(%)を表示」を ON
-# コントロールセンター > 時計 > 時計のオプション > 時刻 で「スタイル」を アナログ に変更
+# キーボード > キーボードショートカット > Spotlight > Spotlight検索を表示 : OFF
+# キーボード > キーボードショートカット > 修飾キー > Caps Lock : Command
+# コントロールセンター > バッテリー > 割合(%)を表示 : ON
+# コントロールセンター > 時計 > 時計のオプション > 時刻 > スタイル : アナログ
+# コントロールセンター > Bluetooth : メニューバーに表示
+# コントロールセンター > Spotlight : メニューバーに非表示
+# コントロールセンター > Siri : メニューバーに非表示
 
 # Itsycal の設定
 # Appearance > Menubar で「M/d E HH:mm:ss」、「Hide icon」を ON
@@ -125,7 +128,7 @@ echo "✅ setup complete!"
 # iterm の設定の import
 # https://zenn.dev/ripopo23/articles/2d1baf1a97e136
 
-# Raycast の設定の import
+# Raycast の設定の import ?
 
 # Google 日本語入力の設定
 # スペースや数字を半角入力する
