@@ -3,6 +3,7 @@
     "allow": [
       "List(*)",
       "Bash(ls:*)",
+      "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(cat:*)",
       "Bash(head:*)",
