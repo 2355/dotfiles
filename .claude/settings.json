@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "List(*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(less:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(cut:*)",
+      "Bash(awk:*)",
+      "Bash(sed:*)",
+      "Bash(ps:*)",
+      "Bash(top:*)",
+      "Bash(which:*)",
+      "Bash(whereis:*)",
+      "Bash(whoami:*)",
+      "Bash(pwd:*)",
+      "Bash(du:*)",
+      "Bash(df:*)",
+      "Bash(date:*)",
+      "Bash(echo:*)",
+      "Bash(printf:*)",
+      "Bash(npm:*)",
+      "Bash(yarn:*)",
+      "Read(~/.zshrc)"
+    ]
+  }
+}

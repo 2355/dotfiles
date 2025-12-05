@@ -108,6 +108,8 @@ ln -fnsv ~/work/dotfiles/.gitconfig ~/.gitconfig
 ln -fnsv ~/work/dotfiles/.vimrc ~/.vimrc
 ln -fnsv ~/work/dotfiles/.zshrc ~/.zshrc
 source ~/.zshrc
+ln -fnsv ~/work/dotfiles/.claude/CLAUDE.md ~/.claude/CLAUDE.md
+ln -fnsv ~/work/dotfiles/.claude/settings.json ~/.claude/settings.json
 
 echo "✅ setup complete!"
 
