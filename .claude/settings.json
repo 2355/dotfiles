@@ -28,6 +28,7 @@
       "Bash(printf:*)",
       "Bash(npm:*)",
       "Bash(yarn:*)",
+      "Bash(pnpm:*)",
       "Read(~/.zshrc)"
     ]
   }
