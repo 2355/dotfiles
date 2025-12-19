@@ -105,6 +105,8 @@ brew bundle install --file=.Brewfile
 #----------------------------------------------------------
 echo "Creating symbolic links for dotfiles..."
 ln -fnsv ~/work/dotfiles/.gitconfig ~/.gitconfig
+mkdir -p ~/.config/git
+ln -fnsv ~/work/dotfiles/.config/git/ignore ~/.config/git/ignore
 ln -fnsv ~/work/dotfiles/.vimrc ~/.vimrc
 ln -fnsv ~/work/dotfiles/.zshrc ~/.zshrc
 source ~/.zshrc

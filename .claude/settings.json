@@ -17,6 +17,7 @@
       "Bash(sed:*)",
       "Bash(ps:*)",
       "Bash(top:*)",
+      "Bash(test:*)",
       "Bash(which:*)",
       "Bash(whereis:*)",
       "Bash(whoami:*)",
@@ -29,7 +30,32 @@
       "Bash(npm:*)",
       "Bash(yarn:*)",
       "Bash(pnpm:*)",
-      "Read(~/.zshrc)"
+      "Read(~/.zshrc)",
+      "mcp__serena__*"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Completed!!\" with title \"Claude Code\" sound name \"Glass\"'"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Waiting...\" with title \"Claude Code\" sound name \"Ping\"'"
+          }
+        ]
+      }
     ]
   }
 }
