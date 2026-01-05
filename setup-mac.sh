@@ -132,7 +132,9 @@ echo "✅ setup complete!"
 # iterm の設定の import
 # https://zenn.dev/ripopo23/articles/2d1baf1a97e136
 
-# Raycast の設定の import ?
+# Raycast の設定の import
+# Settings > Advanced > Import / Export
+# https://phys-edu.net/wp/?p=42570
 
 # Google 日本語入力の設定
 # スペースや数字を半角入力する
