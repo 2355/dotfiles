@@ -110,8 +110,10 @@ ln -fnsv ~/work/dotfiles/.config/git/ignore ~/.config/git/ignore
 ln -fnsv ~/work/dotfiles/.vimrc ~/.vimrc
 ln -fnsv ~/work/dotfiles/.zshrc ~/.zshrc
 source ~/.zshrc
+mkdir -p ~/.claude
 ln -fnsv ~/work/dotfiles/.claude/CLAUDE.md ~/.claude/CLAUDE.md
 ln -fnsv ~/work/dotfiles/.claude/settings.json ~/.claude/settings.json
+ln -sfn ~/work/dotfiles/.claude/commands ~/.claude/commands
 
 echo "✅ setup complete!"
 
