@@ -33,7 +33,7 @@ if [ -n "$remaining" ]; then
   used_int=$(printf "%.0f" "$(echo "100 - $remaining" | bc)")
 
   if [ "$used_int" -lt 50 ]; then
-    color="\033[32m"
+    color="\033[90m"
   elif [ "$used_int" -lt 75 ]; then
     color="\033[33m"
   else
