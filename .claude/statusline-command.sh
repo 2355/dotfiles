@@ -26,6 +26,13 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
   fi
 fi
 
+# Model info
+model_info=""
+model_name=$(echo "$input" | jq -r '.model.display_name // empty')
+if [ -n "$model_name" ]; then
+  model_info=" \033[34m[${model_name}]\033[0m"
+fi
+
 # Context window info (usage percentage)
 context_info=""
 remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
@@ -44,4 +51,4 @@ if [ -n "$remaining" ]; then
 fi
 
 # Output status line
-printf "\033[36m%s\033[0m%b%b" "$current_dir" "$git_info" "$context_info"
+printf "\033[36m%s\033[0m%b%b%b" "$current_dir" "$git_info" "$model_info" "$context_info"
