@@ -117,6 +117,15 @@ ln -fnsv ~/work/dotfiles/.claude/statusline-command.sh ~/.claude/statusline-comm
 ln -sfn ~/work/dotfiles/.claude/commands ~/.claude/commands
 ln -sfn ~/work/dotfiles/.claude/skills ~/.claude/skills
 
+#----------------------------------------------------------
+# Claude Code MCP サーバーの登録
+#----------------------------------------------------------
+echo "Registering Claude Code MCP servers..."
+claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@latest --no-usage-statistics --no-performance-crux
+claude mcp add --scope user --transport http context7 https://mcp.context7.com/mcp
+claude mcp add --scope user serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false
+claude mcp add --scope user --transport http figma-desktop http://127.0.0.1:3845/mcp
+
 echo "✅ setup complete!"
 
 #----------------------------------------------------------
