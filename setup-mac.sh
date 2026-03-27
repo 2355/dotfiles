@@ -107,6 +107,8 @@ echo "Creating symbolic links for dotfiles..."
 ln -fnsv ~/work/dotfiles/.gitconfig ~/.gitconfig
 mkdir -p ~/.config/git
 ln -fnsv ~/work/dotfiles/.config/git/ignore ~/.config/git/ignore
+mkdir -p ~/.config/yazi
+ln -fnsv ~/work/dotfiles/.config/yazi/yazi.toml ~/.config/yazi/yazi.toml
 ln -fnsv ~/work/dotfiles/.vimrc ~/.vimrc
 ln -fnsv ~/work/dotfiles/.zshrc ~/.zshrc
 source ~/.zshrc
