@@ -113,3 +113,12 @@ fgb() {
 
 # anyenv
 eval "$(anyenv init -)"
+
+# yazi - コマンド実行後にカレントディレクトリを変更する
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    command yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
