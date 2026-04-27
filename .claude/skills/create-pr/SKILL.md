@@ -35,5 +35,5 @@ $ARGUMENTS を元に PR を作成してください。
      - **変更の影響範囲**: この変更がどこに波及するか
 
 6. PR を作成する
-   - `gh pr create` コマンドで PR を作成する
+   - `gh pr create --draft` コマンドで draft PR として作成する
    - 作成後、PR の URL をユーザに報告する
