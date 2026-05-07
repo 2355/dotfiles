@@ -116,6 +116,7 @@ mkdir -p ~/.claude
 ln -fnsv ~/work/dotfiles/.claude/CLAUDE.md ~/.claude/CLAUDE.md
 ln -fnsv ~/work/dotfiles/.claude/settings.json ~/.claude/settings.json
 ln -fnsv ~/work/dotfiles/.claude/statusline-command.sh ~/.claude/statusline-command.sh
+ln -sfn ~/work/dotfiles/.claude/agents ~/.claude/agents
 ln -sfn ~/work/dotfiles/.claude/commands ~/.claude/commands
 ln -sfn ~/work/dotfiles/.claude/skills ~/.claude/skills
 
