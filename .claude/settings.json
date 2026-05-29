@@ -3,7 +3,6 @@
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "permissions": {
-    "additionalDirectories": ["~/work/worktrees"],
     "allow": [
       "List(*)",
       "Bash(ls:*)",
@@ -38,6 +37,9 @@
       "Read(~/.zshrc)",
       "mcp__serena__*",
       "mcp__plugin_notion-mcp_notion__notion-fetch"
+    ],
+    "additionalDirectories": [
+      "~/work/worktrees"
     ]
   },
   "hooks": {
@@ -79,6 +81,7 @@
     "enabled": true,
     "mode": "hold"
   },
-  "voiceEnabled": true,
-  "remoteControlAtStartup": true
+  "theme": "auto",
+  "remoteControlAtStartup": true,
+  "voiceEnabled": true
 }
