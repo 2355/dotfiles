@@ -109,6 +109,18 @@ echo "Installing applications via Homebrew..."
 brew bundle install --file=.Brewfile
 
 #----------------------------------------------------------
+# zsh compinit の insecure directory 警告を解消
+#----------------------------------------------------------
+# Homebrew が作るディレクトリの一部に group-write が付いており、
+# compinit が起動時に「insecure directories」警告を出すため、compaudit で
+# 検出した該当ディレクトリの group-write を一括で外す
+echo "Fixing insecure zsh completion directories..."
+insecure_dirs="$(zsh -c 'autoload -Uz compaudit; compaudit' 2>/dev/null || true)"
+if [ -n "${insecure_dirs}" ]; then
+  echo "${insecure_dirs}" | xargs chmod g-w
+fi
+
+#----------------------------------------------------------
 # シンボリックリンクの作成
 #----------------------------------------------------------
 echo "Creating symbolic links for dotfiles..."
