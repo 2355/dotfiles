@@ -144,21 +144,22 @@ echo "✅ setup complete!"
 #----------------------------------------------------------
 # キーボード > キーボードショートカット > Spotlight > Spotlight検索を表示 : OFF
 # キーボード > キーボードショートカット > 修飾キー > Caps Lock : Command
-# コントロールセンター > バッテリー > 割合(%)を表示 : ON
-# コントロールセンター > 時計 > 時計のオプション > 時刻 > スタイル : アナログ
-# コントロールセンター > Bluetooth : メニューバーに表示
-# コントロールセンター > Spotlight : メニューバーに非表示
-# コントロールセンター > Siri : メニューバーに非表示
-
-# Itsycal の設定
-# Appearance > Menubar で「M/d E HH:mm:ss」、「Hide icon」を ON
-
-# iterm の設定の import
-# https://zenn.dev/ripopo23/articles/2d1baf1a97e136
+# メニューバー > バッテリー > 割合(%)を表示 : ON
+# メニューバー > 時計 > 時計のオプション > 時刻 > スタイル : アナログ
+# メニューバー > Bluetooth : メニューバーに表示
+# メニューバー > Spotlight : メニューバーに非表示
+# メニューバー > Siri : メニューバーに非表示
 
 # Raycast の設定の import
 # Settings > Advanced > Import / Export
 # https://phys-edu.net/wp/?p=42570
+
+
+# iterm の設定の import
+# https://zenn.dev/ripopo23/articles/2d1baf1a97e136
+
+# Itsycal の設定
+# Appearance > Menubar で「M/d E HH:mm:ss」、「Hide icon」を ON
 
 # Google 日本語入力の設定
 # スペースや数字を半角入力する
