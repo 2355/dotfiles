@@ -131,6 +131,8 @@ mkdir -p ~/.config/yazi
 ln -fnsv ~/work/dotfiles/.config/yazi/yazi.toml ~/.config/yazi/yazi.toml
 ln -fnsv ~/work/dotfiles/.vimrc ~/.vimrc
 ln -fnsv ~/work/dotfiles/.zshrc ~/.zshrc
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+ln -fnsv ~/work/dotfiles/.ssh/config ~/.ssh/config
 source ~/.zshrc
 mkdir -p ~/.claude
 ln -fnsv ~/work/dotfiles/.claude/CLAUDE.md ~/.claude/CLAUDE.md
