@@ -131,11 +131,21 @@ ln -sfn ~/work/dotfiles/.claude/skills ~/.claude/skills
 #----------------------------------------------------------
 # Claude Code MCP サーバーの登録
 #----------------------------------------------------------
+# claude mcp add は重複登録できないため、未登録のもののみ追加する
 echo "Registering Claude Code MCP servers..."
-claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@latest --no-usage-statistics --no-performance-crux
-claude mcp add --scope user --transport http context7 https://mcp.context7.com/mcp
-claude mcp add --scope user serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false
-claude mcp add --scope user --transport http figma-desktop http://127.0.0.1:3845/mcp
+mcp_list="$(claude mcp list 2>/dev/null || true)"
+mcp_add_if_missing() {
+  local name="$1"; shift
+  if printf '%s\n' "${mcp_list}" | grep -q "^${name}:"; then
+    echo "MCP server '${name}' is already registered."
+  else
+    claude mcp add --scope user "$@"
+  fi
+}
+mcp_add_if_missing chrome-devtools chrome-devtools -- npx -y chrome-devtools-mcp@latest --no-usage-statistics --no-performance-crux
+mcp_add_if_missing context7 --transport http context7 https://mcp.context7.com/mcp
+mcp_add_if_missing serena serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false
+mcp_add_if_missing figma-desktop --transport http figma-desktop http://127.0.0.1:3845/mcp
 
 #----------------------------------------------------------
 # Node.js のセットアップ (nodenv 経由)
