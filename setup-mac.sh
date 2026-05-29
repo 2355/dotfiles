@@ -137,6 +137,38 @@ claude mcp add --scope user --transport http context7 https://mcp.context7.com/m
 claude mcp add --scope user serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false
 claude mcp add --scope user --transport http figma-desktop http://127.0.0.1:3845/mcp
 
+#----------------------------------------------------------
+# Node.js のセットアップ (nodenv 経由)
+#----------------------------------------------------------
+echo "Setting up Node.js via nodenv..."
+# anyenv-update: anyenv update で **env / プラグインを一括更新できるようにする
+if [ ! -d "$(anyenv root)/plugins/anyenv-update" ]; then
+  git clone https://github.com/znz/anyenv-update.git "$(anyenv root)/plugins/anyenv-update"
+fi
+# anyenv install マニフェストの初期化（初回のみ）
+if [ ! -d "$(anyenv root)/share/anyenv-install" ]; then
+  printf 'y\n' | anyenv install --init
+fi
+# nodenv のインストール
+if [ ! -d "$(anyenv root)/envs/nodenv" ]; then
+  anyenv install nodenv
+  eval "$(anyenv init -)"
+fi
+# nodenv-package-json-engine: package.json の engines.node から自動でバージョン解決
+if [ ! -d "$(nodenv root)/plugins/nodenv-package-json-engine" ]; then
+  git clone https://github.com/nodenv/nodenv-package-json-engine.git "$(nodenv root)/plugins/nodenv-package-json-engine"
+fi
+# 最新 LTS を取得して install / global を設定
+NODE_LTS="$(curl -fsSL https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | sed 's/^v//')"
+if ! nodenv versions --bare | grep -qx "${NODE_LTS}"; then
+  nodenv install "${NODE_LTS}"
+fi
+nodenv global "${NODE_LTS}"
+nodenv rehash
+node -v
+# Node 同梱の corepack を有効化（pnpm / yarn の shim を生成）
+corepack enable
+
 echo "✅ setup complete!"
 
 #----------------------------------------------------------
@@ -166,4 +198,3 @@ echo "✅ setup complete!"
 # ¥ キーで \ を入力する
 
 # ssh キーの作成、GitHubへの登録
-# nodenv で Node.js のインストール
