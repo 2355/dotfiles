@@ -156,7 +156,7 @@ if [ ! -d "$(anyenv root)/plugins/anyenv-update" ]; then
   git clone https://github.com/znz/anyenv-update.git "$(anyenv root)/plugins/anyenv-update"
 fi
 # anyenv install マニフェストの初期化（初回のみ）
-if [ ! -d "$(anyenv root)/share/anyenv-install" ]; then
+if [ ! -d ~/.config/anyenv/anyenv-install ]; then
   printf 'y\n' | anyenv install --init
 fi
 # nodenv のインストール
@@ -175,6 +175,7 @@ if ! nodenv versions --bare | grep -qx "${NODE_LTS}"; then
 fi
 nodenv global "${NODE_LTS}"
 nodenv rehash
+source ~/.zshrc
 node -v
 # Node 同梱の corepack を有効化（pnpm / yarn の shim を生成）
 corepack enable
