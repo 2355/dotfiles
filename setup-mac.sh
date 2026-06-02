@@ -156,10 +156,7 @@ mcp_add_if_missing() {
     claude mcp add --scope user "$@"
   fi
 }
-mcp_add_if_missing chrome-devtools chrome-devtools -- npx -y chrome-devtools-mcp@latest --no-usage-statistics --no-performance-crux
-mcp_add_if_missing context7 --transport http context7 https://mcp.context7.com/mcp
 mcp_add_if_missing serena serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false
-mcp_add_if_missing figma-desktop --transport http figma-desktop http://127.0.0.1:3845/mcp
 
 #----------------------------------------------------------
 # Node.js のセットアップ (nodenv 経由)
