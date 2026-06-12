@@ -122,3 +122,6 @@ function y() {
     [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
     rm -f -- "$tmp"
 }
+
+# wtp - worktree 作成後に自動でディレクト移動する
+eval "$(wtp hook zsh)"
