@@ -105,6 +105,8 @@ fi
 #----------------------------------------------------------
 # brew 管理のアプリをインストール
 #----------------------------------------------------------
+# dump command memo
+# brew bundle dump --file=~/work/dotfiles/Brewfile --force --describe
 echo "Installing applications via Homebrew..."
 brew bundle install --file=.Brewfile
 
@@ -127,13 +129,17 @@ echo "Creating symbolic links for dotfiles..."
 ln -fnsv ~/work/dotfiles/.gitconfig ~/.gitconfig
 mkdir -p ~/.config/git
 ln -fnsv ~/work/dotfiles/.config/git/ignore ~/.config/git/ignore
+
 mkdir -p ~/.config/yazi
 ln -fnsv ~/work/dotfiles/.config/yazi/yazi.toml ~/.config/yazi/yazi.toml
-ln -fnsv ~/work/dotfiles/.vimrc ~/.vimrc
-ln -fnsv ~/work/dotfiles/.zshrc ~/.zshrc
+
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 ln -fnsv ~/work/dotfiles/.ssh/config ~/.ssh/config
+
+ln -fnsv ~/work/dotfiles/.vimrc ~/.vimrc
+ln -fnsv ~/work/dotfiles/.zshrc ~/.zshrc
 source ~/.zshrc
+
 mkdir -p ~/.claude
 ln -fnsv ~/work/dotfiles/.claude/CLAUDE.md ~/.claude/CLAUDE.md
 ln -fnsv ~/work/dotfiles/.claude/settings.json ~/.claude/settings.json
@@ -141,6 +147,15 @@ ln -fnsv ~/work/dotfiles/.claude/statusline-command.sh ~/.claude/statusline-comm
 ln -sfn ~/work/dotfiles/.claude/agents ~/.claude/agents
 ln -sfn ~/work/dotfiles/.claude/commands ~/.claude/commands
 ln -sfn ~/work/dotfiles/.claude/skills ~/.claude/skills
+
+#----------------------------------------------------------
+# borders の設定
+#----------------------------------------------------------
+echo "Setting up borders..."
+mkdir -p ~/.config/borders
+ln -fnsv ~/work/dotfiles/.config/borders/bordersrc ~/.config/borders/bordersrc
+chmod +x ~/.config/borders/bordersrc
+brew services start borders
 
 #----------------------------------------------------------
 # Claude Code MCP サーバーの登録
