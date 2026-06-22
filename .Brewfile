@@ -1,4 +1,5 @@
 tap "felixkratz/formulae"
+tap "manaflow-ai/cmux"
 tap "satococoa/tap"
 
 # All in one for \*\*env
@@ -105,6 +106,10 @@ cask "alt-tab"
 
 cask "claude-code"
 
+# Ghostty-based terminal with vertical tabs and notifications for AI coding agents
+
+cask "cmux"
+
 # App to build and share containerised applications and microservices
 
 cask "docker-desktop"
@@ -194,7 +199,6 @@ vscode "vscjava.vscode-java-debug"
 vscode "vscjava.vscode-java-dependency"
 vscode "vscjava.vscode-java-pack"
 vscode "vscjava.vscode-java-test"
-vscode "vscjava.vscode-java-upgrade"
 vscode "vscjava.vscode-maven"
 vscode "vsls-contrib.codetour"
 vscode "vsls-contrib.gistfs"
