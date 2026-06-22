@@ -133,6 +133,12 @@ ln -fnsv ~/work/dotfiles/.config/git/ignore ~/.config/git/ignore
 mkdir -p ~/.config/yazi
 ln -fnsv ~/work/dotfiles/.config/yazi/yazi.toml ~/.config/yazi/yazi.toml
 
+mkdir -p ~/.config/cmux
+ln -fnsv ~/work/dotfiles/.config/cmux/cmux.json ~/.config/cmux/cmux.json
+
+mkdir -p ~/.config/ghostty
+ln -fnsv ~/work/dotfiles/.config/ghostty/config ~/.config/ghostty/config
+
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 ln -fnsv ~/work/dotfiles/.ssh/config ~/.ssh/config
 
