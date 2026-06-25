@@ -1,10 +1,10 @@
 ---
 name: create-pr
 description: PR を作成する。現在のブランチから base ブランチ（ユーザに選択させる）に向けて PR を作成し、PR テンプレートをベースに概要欄を記入する。ユーザが「PR作って」「プルリク作成して」「PR出して」などと言った場合や、Issue 番号を指定して PR 作成を依頼された場合にこのスキルを使用する。
-argument-hint: "[issue-url or issue-number]"
+argument-hint: "[issue-url or issue-number] [--draft]"
 ---
 
-$ARGUMENTS を元に、現在のブランチから draft PR を作成する。
+$ARGUMENTS を元に、現在のブランチから PR を作成する。`--draft` が含まれる場合のみ draft PR にする。
 
 ## 手順
 
@@ -25,16 +25,17 @@ $ARGUMENTS を元に、現在のブランチから draft PR を作成する。
    - 無ければ「概要 / 関連 Issue」の最低限の枠組みを自分で組む
 
 4. **PR タイトルを決める**
-   - `$ARGUMENTS` あり: `gh issue view <issue>` で取得した Issue タイトルをそのまま使う
-   - `$ARGUMENTS` なし: `git log <base-branch>..HEAD` のコミット内容からタイトルを生成する
+   - `$ARGUMENTS` から `--draft` フラグを除いた値を Issue 指定として解釈する
+   - Issue 指定あり: `gh issue view <issue>` で取得した Issue タイトルをそのまま使う
+   - Issue 指定なし: `git log <base-branch>..HEAD` のコミット内容からタイトルを生成する
 
 5. **PR 本文を書く**
    - `git diff <base-branch>...HEAD` で差分を確認する
    - テンプレートのセクションを埋める。書き方は後述の「本文の指針」に従う
-   - `$ARGUMENTS` あれば Issues 欄に Issue URL を記入する
+   - Issue 指定あれば Issues 欄に Issue URL を記入する
 
 6. **PR を作成する**
-   - `gh pr create --draft --base <base-branch>` で draft PR として作成する
+   - `gh pr create --base <base-branch>` で PR を作成する。`$ARGUMENTS` に `--draft` が含まれていた場合のみ `--draft` を付ける
    - 作成後、PR の URL をユーザに報告する
 
 ## 本文の指針
