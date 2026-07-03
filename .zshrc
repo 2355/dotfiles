@@ -51,13 +51,38 @@ zstyle ':vcs_info:git:*' stagedstr '%F{yellow}!'
 zstyle ':vcs_info:git:*' unstagedstr '%F{red}+'
 zstyle ':vcs_info:*' formats ' %F{green}%c%u(%b)%f'
 zstyle ':vcs_info:*' actionformats ' (%b|%a)'
+# EPOCHREALTIME（小数秒つき epoch）でコマンド実行時間を計測する
+zmodload zsh/datetime
+preexec () {
+    _cmd_start=$EPOCHREALTIME
+}
 precmd () {
     vcs_info
+    # preexec はコマンドを実行したときだけ呼ばれるため、
+    # Enter 空打ちで前回の値が残らないよう未計測時はクリアする
+    if [[ -n $_cmd_start ]]; then
+        local elapsed=$(( EPOCHREALTIME - _cmd_start ))
+        unset _cmd_start
+        if (( elapsed >= 60 )); then
+            local -i mins=$(( elapsed / 60 ))
+            _cmd_elapsed=$(printf '%dm%.1fs' $mins $(( elapsed - mins * 60 )))
+            _cmd_elapsed_color=red
+        elif (( elapsed < 1 )); then
+            _cmd_elapsed=$(printf '%dms' $(( elapsed * 1000 )))
+            _cmd_elapsed_color=green
+        else
+            _cmd_elapsed=$(printf '%.1fs' $elapsed)
+            _cmd_elapsed_color=yellow
+        fi
+    else
+        _cmd_elapsed=''
+    fi
 }
 # 左プロンプト - ディレクトリ名と git status
 PROMPT='%F{cyan}%~%f${vcs_info_msg_0_}\$ %f'
-# 右プロンプト - 時刻。前回のコマンド失敗時には赤くなる
-RPROMPT='%(?.%{%F{green}%}.%{%F{red}%})[%*]%f'
+# 右プロンプト - 前回コマンドの実行時間（1秒未満: 緑 / 1分未満: 黄 / それ以上: 赤）と時刻。
+# 前回のコマンド失敗時には時刻が赤くなる
+RPROMPT='${_cmd_elapsed:+%F{${_cmd_elapsed_color}\}${_cmd_elapsed}%f }%(?.%{%F{green}%}.%{%F{red}%})[%*]%f'
 
 # fzf history - ^r でコマンド履歴表示
 function fzf-select-history() {
