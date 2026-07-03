@@ -11,6 +11,13 @@
 
 - 自動的にコミットやプッシュを行わない
 
+## Shell Command Execution
+
+- 現在の作業ディレクトリ配下のファイルを操作する際、不要な `cd` や `git -C <絶対パス>` を使わない
+  - 不要な permission prompt が発生するため
+  - cwd が既にプロジェクト内であれば、`git` や各種コマンドは cwd を基準に動作するので prefix は不要
+  - 別ディレクトリで作業する必要があるときのみ `cd` / `git -C` を使う
+
 ## Commit rules
 
 - コミットメッセージは `<type>: <summary>` の形式で書く

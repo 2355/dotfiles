@@ -36,12 +36,18 @@
       "Bash(gh search code:*)",
       "Read(~/.zshrc)",
       "mcp__serena__*",
-      "mcp__plugin_notion-mcp_notion__notion-fetch"
+      "mcp__plugin_notion-mcp_notion__notion-fetch",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__*"
+    ],
+    "ask": [
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__upload_file"
     ],
     "additionalDirectories": [
       "~/work/worktrees"
     ]
   },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "Stop": [
       {
@@ -87,11 +93,13 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "language": "日本語",
+  "tui": "fullscreen",
   "voice": {
     "enabled": true,
     "mode": "hold"
   },
   "theme": "auto",
   "remoteControlAtStartup": true,
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "agentPushNotifEnabled": true
 }
