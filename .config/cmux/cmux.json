@@ -1,16 +1,16 @@
 {
-  "$schema" : "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
-  "schemaVersion" : 1,
-  "shortcuts" : {
-    "bindings" : {
-      "showHideAllWindows" : {
-        "first" : {
-          "command" : true,
-          "control" : false,
-          "key" : " ",
-          "keyCode" : 49,
-          "option" : false,
-          "shift" : true
+  "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "schemaVersion": 1,
+  "shortcuts": {
+    "bindings": {
+      "showHideAllWindows": {
+        "first": {
+          "command": false,
+          "control": false,
+          "key": " ",
+          "keyCode": 49,
+          "option": true,
+          "shift": false
         }
       }
     }
