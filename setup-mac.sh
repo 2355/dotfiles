@@ -108,7 +108,7 @@ fi
 # dump command memo
 # brew bundle dump --file=~/work/dotfiles/Brewfile --force --describe
 echo "Installing applications via Homebrew..."
-brew bundle install --file=.Brewfile
+brew bundle install --file=Brewfile
 
 #----------------------------------------------------------
 # zsh compinit の insecure directory 警告を解消
