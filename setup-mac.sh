@@ -132,6 +132,8 @@ ln -fnsv ~/work/dotfiles/.config/git/ignore ~/.config/git/ignore
 
 mkdir -p ~/.config/yazi
 ln -fnsv ~/work/dotfiles/.config/yazi/yazi.toml ~/.config/yazi/yazi.toml
+ln -fnsv ~/work/dotfiles/.config/yazi/package.toml ~/.config/yazi/package.toml
+ya pkg install
 
 mkdir -p ~/.config/cmux
 ln -fnsv ~/work/dotfiles/.config/cmux/cmux.json ~/.config/cmux/cmux.json

@@ -1,3 +1,7 @@
 [mgr]
 show_hidden = true
-ratio = [1,2,4]
+ratio = [0,2,4]
+
+[[plugin.prepend_previewers]]
+mime = "text/*"
+run  = 'piper -- bat --style=numbers --color=always --terminal-width=$w "$1"'
