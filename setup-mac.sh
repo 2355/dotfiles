@@ -141,6 +141,9 @@ ln -fnsv ~/work/dotfiles/.config/cmux/cmux.json ~/.config/cmux/cmux.json
 mkdir -p ~/.config/ghostty
 ln -fnsv ~/work/dotfiles/.config/ghostty/config ~/.config/ghostty/config
 
+mkdir -p ~/.config/hunk
+ln -fnsv ~/work/dotfiles/.config/hunk/config.toml ~/.config/hunk/config.toml
+
 # lazygit は macOS では ~/Library/Application Support/lazygit を参照するため、
 # Linux 互換の ~/.config 側と両方にリンクを張る
 mkdir -p ~/.config/lazygit
