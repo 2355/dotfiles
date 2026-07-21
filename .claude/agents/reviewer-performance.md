@@ -1,6 +1,6 @@
 ---
-name: implement-reviewer-performance
-description: 実装にパフォーマンス上の問題がないかをレビューするエージェント。implement skill から呼び出される。
+name: reviewer-performance
+description: 実装にパフォーマンス上の問題がないかをレビューするエージェント。実装完了後のセルフレビューや、パフォーマンス観点（N+1 等）のレビューを依頼された場合に使用する。
 tools: Read, Glob, Grep, Bash
 model: sonnet
 ---

@@ -1,6 +1,6 @@
 ---
-name: implement-reviewer-architecture
-description: 実装がプロジェクトの設計方針・アーキテクチャと整合しているかをレビューするエージェント。implement skill から呼び出される。
+name: reviewer-architecture
+description: 実装がプロジェクトの設計方針・アーキテクチャと整合しているかをレビューするエージェント。実装完了後のセルフレビューや、設計観点のレビューを依頼された場合に使用する。
 tools: Read, Glob, Grep, Bash
 model: sonnet
 ---

@@ -1,6 +1,6 @@
 ---
-name: implement-reviewer-security
-description: 実装にセキュリティ上の脆弱性がないかをレビューするエージェント。implement skill から呼び出される。
+name: reviewer-security
+description: 実装にセキュリティ上の脆弱性がないかをレビューするエージェント。実装完了後のセルフレビューや、セキュリティ観点のレビューを依頼された場合に使用する。
 tools: Read, Glob, Grep, Bash
 model: sonnet
 ---
