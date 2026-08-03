@@ -1,6 +1,7 @@
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_SCROLL_SPEED": "0.75"
   },
   "permissions": {
     "allow": [
@@ -88,7 +89,6 @@
       "~/work/worktrees"
     ]
   },
-  "model": "claude-fable-5[1m]",
   "hooks": {
     "Stop": [
       {
@@ -96,18 +96,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Completed!!\" with title \"Claude Code\" sound name \"Glass\"'"
+            "command": "jq -e '.agent_id == null' > /dev/null && afplay /System/Library/Sounds/Glass.aiff || true"
           }
         ]
       }
     ],
     "Notification": [
       {
-        "matcher": "*",
+        "matcher": "permission_prompt",
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Waiting...\" with title \"Claude Code\" sound name \"Ping\"'"
+            "command": "afplay /System/Library/Sounds/Ping.aiff"
           }
         ]
       }
@@ -131,7 +131,8 @@
     "ruby-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "stripe@claude-plugins-official": true
   },
   "language": "日本語",
   "tui": "fullscreen",
@@ -139,8 +140,10 @@
     "enabled": true,
     "mode": "hold"
   },
+  "skipWorkflowUsageWarning": true,
   "theme": "auto",
   "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true,
   "voiceEnabled": true,
-  "agentPushNotifEnabled": true
+  "model": "claude-fable-5[1m]"
 }
