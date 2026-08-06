@@ -30,11 +30,18 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
   fi
 fi
 
-# Model info
+# Model info（モデル名によって色分け。fable: 39 / opus: 202 / sonnet: 10 / haiku: 227 / それ以外: 255）
 model_info=""
 model_name=$(echo "$input" | jq -r '.model.display_name // empty')
 if [ -n "$model_name" ]; then
-  model_info=" 🤖 \033[34m${model_name}\033[0m"
+  case "$model_name" in
+    *[Ff]able*) model_color="\033[38;5;39m" ;;
+    *[Oo]pus*) model_color="\033[38;5;208m" ;;
+    *[Ss]onnet*) model_color="\033[38;5;10m" ;;
+    *[Hh]aiku*) model_color="\033[38;5;227m" ;;
+    *) model_color="\033[38;5;255m" ;;
+  esac
+  model_info=" 🤖 ${model_color}${model_name}\033[0m"
 fi
 
 # グレーの区切り線（パーセント以外は色を付けない）
