@@ -1,0 +1,42 @@
+{
+  "version": 3,
+  "skills": {
+    "gh-stack": {
+      "source": "github/gh-stack",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/github/gh-stack.git",
+      "skillPath": "skills/gh-stack/SKILL.md",
+      "skillFolderHash": "c95c8b5b4dd850f3fef007b304428f5684f2fb87",
+      "installedAt": "2026-08-04T04:18:45Z",
+      "updatedAt": "2026-08-04T04:18:45Z"
+    },
+    "grilling-viz": {
+      "source": "mathbullet/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mathbullet/skills.git",
+      "skillPath": "plugins/grilling-viz/skills/grilling-viz/SKILL.md",
+      "skillFolderHash": "1ad48b84e0623c6229be0fb6784e3a47ae9b5b64",
+      "installedAt": "2026-09-10T05:38:13.469Z",
+      "updatedAt": "2026-09-10T05:38:13.469Z"
+    }
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "antigravity-cli",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed",
+    "claude-code"
+  ],
+  "dismissed": {
+    "findSkillsPrompt": true
+  }
+}

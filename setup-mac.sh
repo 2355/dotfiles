@@ -165,6 +165,7 @@ ln -fnsv ~/work/dotfiles/.claude/statusline-command.sh ~/.claude/statusline-comm
 ln -sfn ~/work/dotfiles/.claude/agents ~/.claude/agents
 ln -sfn ~/work/dotfiles/.claude/commands ~/.claude/commands
 ln -sfn ~/work/dotfiles/.claude/skills ~/.claude/skills
+ln -sfn ~/work/dotfiles/.agents ~/.agents
 
 #----------------------------------------------------------
 # borders の設定
