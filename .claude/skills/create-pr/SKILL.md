@@ -25,9 +25,10 @@ $ARGUMENTS を元に、現在のブランチから PR を作成する。`--draft
    - 無ければ「概要 / 関連 Issue」の最低限の枠組みを自分で組む
 
 4. **PR タイトルを決める**
-   - `$ARGUMENTS` から `--draft` フラグを除いた値を Issue 指定として解釈する
-   - Issue 指定あり: `gh issue view <issue>` で取得した Issue タイトルをそのまま使う
-   - Issue 指定なし: `git log <base-branch>..HEAD` のコミット内容からタイトルを生成する
+   - タイトルは `<prefix> <main>` の形式
+   - `<prefix>`: `$ARGUMENTS` からチケット番号が取れればそれ。取れなければ `feat:` `fix:` などの type
+   - `<main>`: チケットが引ければそのタイトル。引けなければ `git log <base-branch>..HEAD` のコミット内容から生成する
+   - チケット番号の形式と付け方はリポジトリごとに違うので固定で判定せず、`gh pr list --limit 20 --json title` で見た既存 PR のタイトルに合わせる
 
 5. **差分を読む**
    - `git diff --stat <base-branch>...HEAD` と `git diff <base-branch>...HEAD` を見る
