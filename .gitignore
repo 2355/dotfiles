@@ -1,0 +1,4 @@
+# Claude Code が claude.ai アカウントから自動同期する公式スキル。
+# ~/.claude/skills がこのリポジトリへのシンボリックリンクのため、
+# 同期のたびに未追跡ファイルとして現れる。
+.claude/skills/synced/
