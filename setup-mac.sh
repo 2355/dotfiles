@@ -123,6 +123,27 @@ if [ -n "${insecure_dirs}" ]; then
 fi
 
 #----------------------------------------------------------
+# safe-chain のインストール
+#----------------------------------------------------------
+# .zshrc が init-posix.sh を source するため、.zshrc を source するより前に入れておく。
+# インストーラが実行する safe-chain setup は ${ZDOTDIR:-$HOME}/.zshrc の safe-chain 行を消して末尾に絶対パスで追記し直す。
+# ~/.zshrc は dotfiles へのシンボリックリンクなので、ZDOTDIR を一時ディレクトリに向けて
+# リポジトリの .zshrc が書き換わらないようにする（~/.bashrc は dotfiles 管理外なので追記を許容する）
+# インストーラは同じバージョンが入っていれば何もしないので、毎回実行して最新版への更新を任せる。
+# パイプで sh に渡すと curl の失敗を set -e で検知できないため、一度ファイルに保存する
+echo "Installing latest safe-chain..."
+safe_chain_tmp="$(mktemp -d)"
+curl -fsSL https://github.com/AikidoSec/safe-chain/releases/latest/download/install-safe-chain.sh -o "${safe_chain_tmp}/install-safe-chain.sh"
+ZDOTDIR="${safe_chain_tmp}" sh "${safe_chain_tmp}/install-safe-chain.sh"
+rm -rf "${safe_chain_tmp}"
+# インストーラは内部の setup が失敗しても終了コード 0 を返すため、
+# .zshrc が実際に読む init-posix.sh の有無で成否を確認する
+if [ ! -f ~/.safe-chain/scripts/init-posix.sh ]; then
+  echo "safe-chain setup failed: ~/.safe-chain/scripts/init-posix.sh not found" >&2
+  exit 1
+fi
+
+#----------------------------------------------------------
 # シンボリックリンクの作成
 #----------------------------------------------------------
 echo "Creating symbolic links for dotfiles..."

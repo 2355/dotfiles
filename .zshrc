@@ -150,3 +150,12 @@ function y() {
 
 # wtp - worktree 作成後に自動でディレクト移動する
 eval "$(wtp hook zsh)"
+
+# パッケージのインストール時にマルウェアを止めるためのツール
+source $HOME/.safe-chain/scripts/init-posix.sh # Safe-chain Zsh initialization script
+
+# モバイルアプリの UI テスト（E2E）用の CLI 
+export PATH=$PATH:$HOME/.maestro/bin
+
+# Android SDK の adb を使うため
+export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
