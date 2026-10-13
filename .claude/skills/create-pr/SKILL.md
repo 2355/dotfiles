@@ -1,10 +1,10 @@
 ---
 name: create-pr
-description: PR を作成する。現在のブランチから base ブランチ（ユーザに選択させる）に向けて PR を作成し、PR テンプレートをベースに概要欄を記入する。ユーザが「PR作って」「プルリク作成して」「PR出して」などと言った場合や、Issue 番号を指定して PR 作成を依頼された場合にこのスキルを使用する。
-argument-hint: "[issue-url or issue-number] [--draft]"
+description: PR を作成する。現在のブランチから base ブランチ（`--base` で指定、無ければユーザに選択させる）に向けて PR を作成し、PR テンプレートをベースに概要欄を記入する。ユーザが「PR作って」「プルリク作成して」「PR出して」などと言った場合や、Issue 番号を指定して PR 作成を依頼された場合にこのスキルを使用する。
+argument-hint: "[issue-url or issue-number] [--base <branch>] [--draft]"
 ---
 
-$ARGUMENTS を元に、現在のブランチから PR を作成する。`--draft` が含まれる場合のみ draft PR にする。
+$ARGUMENTS を元に、現在のブランチから PR を作成する。`--base <branch>` が含まれる場合はその branch を base にする。`--draft` が含まれる場合のみ draft PR にする。
 
 ## 手順
 
@@ -13,12 +13,17 @@ $ARGUMENTS を元に、現在のブランチから PR を作成する。`--draft
    - 現在ブランチがデフォルトブランチと同じならエラーで終了する
    - 現在ブランチがリモートに無い、あるいはローカルが先行している場合は `git push -u origin HEAD` で push する
 
-2. **base ブランチをユーザに確認する**
-   - `gh pr list --state all --limit 50 --json baseRefName -q '.[].baseRefName' | sort | uniq -c | sort -rn` で過去 PR の base ブランチを使用頻度順に取得する
-   - 候補リストはデフォルトブランチを先頭に置き、続けて過去 PR の base を頻度順に並べる。デフォルトブランチは頻度リスト側から除いて重複させない
-   - 候補が 4 つ以内なら全部、5 つ以上なら上位 3 つ + 「Other」（手入力）を AskUserQuestion で提示する。デフォルトブランチには「(Recommended)」を付ける
-   - 過去 PR が無い場合はデフォルトブランチのみを提示する
-   - ユーザが選択した branch を以降の手順で base として使う
+2. **base ブランチを決める**
+   - **base が指定されている場合**: `$ARGUMENTS` の `--base <branch>`（`--base=<branch>` も可）、またはユーザの依頼文中の明示的な base 指定（例:「develop 向けに PR 作って」）があれば、それを base とし AskUserQuestion は出さない
+     - `--base` の直後に値が無い、または次のトークンが `--` で始まる場合はエラーで終了する
+     - 現在ブランチと同じならエラーで終了する
+     - `git ls-remote --exit-code origin refs/heads/<branch>` でリモートに存在するか確認する。終了コード 2 なら「リモートに存在しない」、それ以外の非ゼロなら認証・ネットワークエラーとして、区別してエラー終了する
+   - **base が指定されていない場合**: ユーザに選択させる
+     - `gh pr list --state all --limit 50 --json baseRefName -q '.[].baseRefName' | sort | uniq -c | sort -rn` で過去 PR の base ブランチを使用頻度順に取得する
+     - 候補リストはデフォルトブランチを先頭に置き、続けて過去 PR の base を頻度順に並べる。デフォルトブランチは頻度リスト側から除いて重複させない
+     - 候補が 4 つ以内なら全部、5 つ以上なら上位 3 つ + 「Other」（手入力）を AskUserQuestion で提示する。デフォルトブランチには「(Recommended)」を付ける
+     - 過去 PR が無い場合はデフォルトブランチのみを提示する
+   - base 決定後、`git fetch origin <base-branch>` で最新化する。ローカルの同名ブランチは存在しないか古い可能性があるため、以降の `git log` / `git diff` では `origin/<base-branch>` を参照する
 
 3. **PR テンプレートを取得する**
    - `.github/PULL_REQUEST_TEMPLATE.md` を Read ツールで読む
@@ -27,11 +32,11 @@ $ARGUMENTS を元に、現在のブランチから PR を作成する。`--draft
 4. **PR タイトルを決める**
    - タイトルは `<prefix> <main>` の形式
    - `<prefix>`: `$ARGUMENTS` からチケット番号が取れればそれ。取れなければ `feat:` `fix:` などの type
-   - `<main>`: チケットが引ければそのタイトル。引けなければ `git log <base-branch>..HEAD` のコミット内容から生成する
+   - `<main>`: チケットが引ければそのタイトル。引けなければ `git log origin/<base-branch>..HEAD` のコミット内容から生成する
    - チケット番号の形式と付け方はリポジトリごとに違うので固定で判定せず、`gh pr list --limit 20 --json title` で見た既存 PR のタイトルに合わせる
 
 5. **差分を読む**
-   - `git diff --stat <base-branch>...HEAD` と `git diff <base-branch>...HEAD` を見る
+   - `git diff --stat origin/<base-branch>...HEAD` と `git diff origin/<base-branch>...HEAD` を見る
 
 6. **PR 本文を下書きする**
    - 後述「本文の指針」の型に従ってテンプレートのセクションを埋め、提出前チェックまで通す
@@ -113,7 +118,7 @@ $ARGUMENTS を元に、現在のブランチから PR を作成する。`--draft
   - 記述部分が 30 行を超えている
   - 「結果」「理由」が、diff に現れない前提（この PR で導入した概念・用語、変更したデータモデル、跨いだコンポーネント間のフロー、追従した外部仕様）に触れずには 3 行で書けない
   - 設計判断が 4 件以上ある
-- **実質変更行数が 500 行超、または実質変更ファイル数が 20 超**: `git diff --stat <base-branch>...HEAD` の数値から、lockfile・自動生成ファイル・リネームのみのファイル・フォーマット差分のみのファイルを除いて数える
+- **実質変更行数が 500 行超、または実質変更ファイル数が 20 超**: `git diff --stat origin/<base-branch>...HEAD` の数値から、lockfile・自動生成ファイル・リネームのみのファイル・フォーマット差分のみのファイルを除いて数える
 
 上記に当てはまらないなら作らない。「あった方が親切だから」で作らない。
 
