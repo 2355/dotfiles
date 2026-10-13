@@ -2,3 +2,7 @@
 # ~/.claude/skills がこのリポジトリへのシンボリックリンクのため、
 # 同期のたびに未追跡ファイルとして現れる。
 .claude/skills/synced/
+
+# skill の自動同期などで削除された skill の退避先。
+# 自作の skill ではなく、ツールが自動生成する一時的なものなので追跡しない。
+.claude/skills/.trash/
