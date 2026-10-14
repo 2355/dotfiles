@@ -106,7 +106,7 @@ fi
 # brew 管理のアプリをインストール
 #----------------------------------------------------------
 # dump command memo
-# brew bundle dump --file=~/work/dotfiles/Brewfile --force --describe
+# brew bundle dump --file=~/work/dotfiles/Brewfile --force
 echo "Installing applications via Homebrew..."
 brew bundle install --file=Brewfile
 
@@ -156,14 +156,9 @@ ln -fnsv ~/work/dotfiles/.config/yazi/yazi.toml ~/.config/yazi/yazi.toml
 ln -fnsv ~/work/dotfiles/.config/yazi/package.toml ~/.config/yazi/package.toml
 ya pkg install
 
-mkdir -p ~/.config/cmux
-ln -fnsv ~/work/dotfiles/.config/cmux/cmux.json ~/.config/cmux/cmux.json
-
+# Ghostty 本体は使わないが、Orca がオンボーディングや設定画面で Ghostty の設定を取り込めるように置いておく
 mkdir -p ~/.config/ghostty
 ln -fnsv ~/work/dotfiles/.config/ghostty/config ~/.config/ghostty/config
-
-mkdir -p ~/.config/hunk
-ln -fnsv ~/work/dotfiles/.config/hunk/config.toml ~/.config/hunk/config.toml
 
 # lazygit は macOS では ~/Library/Application Support/lazygit を参照するため、
 # Linux 互換の ~/.config 側と両方にリンクを張る
@@ -246,6 +241,32 @@ node -v
 # Node 同梱の corepack を有効化（pnpm / yarn の shim を生成）
 corepack enable
 
+#----------------------------------------------------------
+# Go のセットアップ (goenv 経由)
+#----------------------------------------------------------
+echo "Setting up Go via goenv..."
+if [ ! -d "$(anyenv root)/envs/goenv" ]; then
+  anyenv install goenv
+  eval "$(anyenv init -)"
+fi
+# goenv の定義に無いバージョンは install できないため、公式の最新版ではなく goenv が知る最新安定版を使う
+GO_LATEST="$(goenv install -l | grep -E '^[[:space:]]*[0-9]+\.[0-9]+\.[0-9]+$' | tail -1 | tr -d ' ')"
+# パイプ途中の失敗は set -e で検知できず、空のまま goenv install "" に進んでしまうため明示的に止める
+if [ -z "${GO_LATEST}" ]; then
+  echo "Failed to resolve latest Go version from goenv" >&2
+  exit 1
+fi
+if ! goenv versions --bare | grep -qx "${GO_LATEST}"; then
+  goenv install "${GO_LATEST}"
+fi
+goenv global "${GO_LATEST}"
+# go install の配置先 GOPATH は goenv init がバージョンごとに設定するため、global 切り替え後に読み直す
+source ~/.zshrc
+go version
+go install golang.org/x/tools/gopls@latest
+# go install で増えたバイナリの shim を作る
+goenv rehash
+
 echo "✅ setup complete!"
 
 #----------------------------------------------------------
@@ -263,9 +284,6 @@ echo "✅ setup complete!"
 # Settings > Advanced > Import / Export
 # https://phys-edu.net/wp/?p=42570
 
-
-# iterm の設定の import
-# https://zenn.dev/ripopo23/articles/2d1baf1a97e136
 
 # Itsycal の設定
 # Appearance > Menubar で「M/d E HH:mm:ss」、「Hide icon」を ON
