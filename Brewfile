@@ -1,7 +1,6 @@
 tap "felixkratz/formulae", trusted: true
 tap "satococoa/tap", trusted: true
 tap "stablyai/orca"
-tap "suzuki-shunsuke/pinact"
 # All in one for **env
 brew "anyenv"
 # Official Amazon AWS command-line interface
@@ -34,6 +33,8 @@ brew "imagemagick-full", link: true
 brew "jq"
 # Simple terminal UI for git commands
 brew "lazygit"
+# Pins GitHub Actions to full hashes and versions
+brew "pinact"
 # PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
 # SVG rendering tool and library
@@ -79,8 +80,6 @@ cask "itsycal"
 cask "ngrok"
 # IDE for orchestrating AI coding agents across terminals and worktrees
 cask "stablyai/orca/orca", trusted: true
-# Pin GitHub Actions versions
-cask "suzuki-shunsuke/pinact/pinact", trusted: true
 # Control your tools with a few keystrokes
 cask "raycast"
 # Plugin for AWS CLI to start and end sessions that connect to managed instances
