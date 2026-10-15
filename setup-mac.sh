@@ -206,7 +206,7 @@ mcp_add_if_missing() {
     claude mcp add --scope user "$@"
   fi
 }
-mcp_add_if_missing serena serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false
+mcp_add_if_missing serena serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false --project-from-cwd
 
 #----------------------------------------------------------
 # Node.js のセットアップ (nodenv 経由)
