@@ -136,8 +136,11 @@ fgb() {
     git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
 }
 
-# anyenv
-eval "$(anyenv init -)"
+# mise - node / go / terraform / pnpm などのバージョン管理
+# 通常の activate はプロンプト表示時に PATH を切り替えるため、このシェルの PATH を引き継いで
+# cd してからコマンドを実行するエディタや AI エージェントではグローバルのバージョンが使われてしまう。
+# 実行時にディレクトリのバージョンを解決する shims 方式にする
+eval "$(mise activate zsh --shims)"
 
 # yazi - コマンド実行後にカレントディレクトリを変更する
 function y() {

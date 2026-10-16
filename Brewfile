@@ -1,8 +1,6 @@
 tap "felixkratz/formulae", trusted: true
 tap "satococoa/tap", trusted: true
 tap "stablyai/orca"
-# All in one for **env
-brew "anyenv"
 # Official Amazon AWS command-line interface
 brew "awscli"
 # Clone of cat(1) with syntax highlighting and Git integration
@@ -33,6 +31,8 @@ brew "imagemagick-full", link: true
 brew "jq"
 # Simple terminal UI for git commands
 brew "lazygit"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
 # Pins GitHub Actions to full hashes and versions
 brew "pinact"
 # PDF rendering library (based on the xpdf-3.0 code base)

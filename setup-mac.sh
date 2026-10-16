@@ -160,6 +160,9 @@ ya pkg install
 mkdir -p ~/.config/ghostty
 ln -fnsv ~/work/dotfiles/.config/ghostty/config ~/.config/ghostty/config
 
+mkdir -p ~/.config/mise
+ln -fnsv ~/work/dotfiles/.config/mise/config.toml ~/.config/mise/config.toml
+
 # lazygit は macOS では ~/Library/Application Support/lazygit を参照するため、
 # Linux 互換の ~/.config 側と両方にリンクを張る
 mkdir -p ~/.config/lazygit
@@ -209,63 +212,12 @@ mcp_add_if_missing() {
 mcp_add_if_missing serena serena -- uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context claude-code --enable-web-dashboard false --project-from-cwd
 
 #----------------------------------------------------------
-# Node.js のセットアップ (nodenv 経由)
+# node / go / terraform / pnpm などのセットアップ (mise 経由)
 #----------------------------------------------------------
-echo "Setting up Node.js via nodenv..."
-# anyenv-update: anyenv update で **env / プラグインを一括更新できるようにする
-if [ ! -d "$(anyenv root)/plugins/anyenv-update" ]; then
-  git clone https://github.com/znz/anyenv-update.git "$(anyenv root)/plugins/anyenv-update"
-fi
-# anyenv install マニフェストの初期化（初回のみ）
-if [ ! -d ~/.config/anyenv/anyenv-install ]; then
-  printf 'y\n' | anyenv install --init
-fi
-# nodenv のインストール
-if [ ! -d "$(anyenv root)/envs/nodenv" ]; then
-  anyenv install nodenv
-  eval "$(anyenv init -)"
-fi
-# nodenv-package-json-engine: package.json の engines.node から自動でバージョン解決
-if [ ! -d "$(nodenv root)/plugins/nodenv-package-json-engine" ]; then
-  git clone https://github.com/nodenv/nodenv-package-json-engine.git "$(nodenv root)/plugins/nodenv-package-json-engine"
-fi
-# 最新 LTS を取得して install / global を設定
-NODE_LTS="$(curl -fsSL https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | sed 's/^v//')"
-if ! nodenv versions --bare | grep -qx "${NODE_LTS}"; then
-  nodenv install "${NODE_LTS}"
-fi
-nodenv global "${NODE_LTS}"
-nodenv rehash
-source ~/.zshrc
-node -v
-# Node 同梱の corepack を有効化（pnpm / yarn の shim を生成）
-corepack enable
-
-#----------------------------------------------------------
-# Go のセットアップ (goenv 経由)
-#----------------------------------------------------------
-echo "Setting up Go via goenv..."
-if [ ! -d "$(anyenv root)/envs/goenv" ]; then
-  anyenv install goenv
-  eval "$(anyenv init -)"
-fi
-# goenv の定義に無いバージョンは install できないため、公式の最新版ではなく goenv が知る最新安定版を使う
-GO_LATEST="$(goenv install -l | grep -E '^[[:space:]]*[0-9]+\.[0-9]+\.[0-9]+$' | tail -1 | tr -d ' ')"
-# パイプ途中の失敗は set -e で検知できず、空のまま goenv install "" に進んでしまうため明示的に止める
-if [ -z "${GO_LATEST}" ]; then
-  echo "Failed to resolve latest Go version from goenv" >&2
-  exit 1
-fi
-if ! goenv versions --bare | grep -qx "${GO_LATEST}"; then
-  goenv install "${GO_LATEST}"
-fi
-goenv global "${GO_LATEST}"
-# go install の配置先 GOPATH は goenv init がバージョンごとに設定するため、global 切り替え後に読み直す
-source ~/.zshrc
-go version
-go install golang.org/x/tools/gopls@latest
-# go install で増えたバイナリの shim を作る
-goenv rehash
+# バージョンは ~/.config/mise/config.toml で宣言しているので、ここでは未インストールのものを入れるだけにする。
+# 新しいバージョンへの追従は mise upgrade で明示的に行う
+echo "Installing tools via mise..."
+mise install
 
 echo "✅ setup complete!"
 
