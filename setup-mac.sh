@@ -65,6 +65,8 @@ defaults write com.apple.screencapture location ~/Downloads
 # 保存ダイアログを常に展開状態で表示
 defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
 defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+# 視覚効果を減らす（アクセシビリティ > ディスプレイ）
+defaults write com.apple.universalaccess reduceMotion -bool true
 
 #----------------------------------------------------------
 # 設定の反映
