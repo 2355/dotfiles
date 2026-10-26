@@ -2,6 +2,7 @@
 node = "lts"
 go = "latest"
 terraform = "latest"
+ruby = "latest"
 # Node.js 26 以降は corepack が同梱されないため、pnpm は Node のバージョンから独立させて mise で入れる
 pnpm = "latest"
 # go backend で入れると Go のバージョン切り替えに関係なく使えるため、go install ではなくここで管理する
@@ -9,7 +10,7 @@ pnpm = "latest"
 
 [settings]
 # グローバルの lts / latest ではなく、各リポジトリが指定するバージョンを使うため、
-# .node-version / .go-version・go.mod・go.work / .terraform-version と package.json の packageManager を読む。
+# .node-version / .go-version・go.mod・go.work / .terraform-version / .ruby-version と package.json の packageManager を読む。
 # .go-version と go.mod が同じディレクトリにある場合は go.mod が優先される（toolchain 行、なければパッチ版まで書かれた go 行）
 
-idiomatic_version_file_enable_tools = ["node", "go", "terraform", "pnpm"]
+idiomatic_version_file_enable_tools = ["node", "go", "terraform", "ruby", "pnpm"]
