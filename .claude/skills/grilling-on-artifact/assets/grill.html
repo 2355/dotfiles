@@ -1,0 +1,506 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* 1 カラムの問診票。現在のラウンドだけを前面に出し、過去は決定ログとして畳む */
+:root{
+  --bg:#f6f7f9;--surface:#ffffff;--fg:#1b2130;--muted:#5b6476;--line:#dde1e8;
+  --accent:#2c56c9;--accent-soft:#e8eefc;--ok:#1d7a4c;--warn:#9a5b00;--err:#b3261e;
+  --font-body:"IBM Plex Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12151b;--surface:#1a1e26;--fg:#e4e8ef;--muted:#98a1b2;--line:#2b313c;
+  --accent:#8aa6ff;--accent-soft:#222c45;--ok:#5cc28f;--warn:#e0a84a;--err:#ff8a80;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151b;--surface:#1a1e26;--fg:#e4e8ef;--muted:#98a1b2;--line:#2b313c;
+  --accent:#8aa6ff;--accent-soft:#222c45;--ok:#5cc28f;--warn:#e0a84a;--err:#ff8a80;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.7;
+  padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:760px;margin:0 auto;display:grid;gap:24px}
+header{display:grid;gap:6px}
+h1{font-size:22px;line-height:1.35;margin:0;text-wrap:balance}
+h2{font-size:15px;margin:0;letter-spacing:.04em;color:var(--muted);font-weight:600}
+h3{font-size:16px;margin:0;line-height:1.5;text-wrap:balance}
+p{margin:0}
+code{font-family:var(--font-mono);font-size:.9em;background:var(--accent-soft);padding:1px 5px;border-radius:4px}
+ul{margin:0;padding-left:1.3em}
+.chip{justify-self:start;font-size:12px;font-weight:600;letter-spacing:.04em;padding:2px 10px;border-radius:999px;border:1px solid currentColor}
+.chip.asking{color:var(--accent)}.chip.waiting{color:var(--warn)}.chip.concluding{color:var(--ok)}.chip.done{color:var(--muted)}
+.muted{color:var(--muted)}
+.prose{display:grid;gap:8px}
+.preface{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.log details{border-top:1px solid var(--line);padding-block:8px}
+.log summary{cursor:pointer;font-weight:600}
+.log dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:8px 0 0}
+.log dt{color:var(--muted);font-family:var(--font-mono);font-size:13px}
+.log dd{margin:0;min-width:0}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px}
+.q.answered{border-color:var(--accent)}
+.qid{font-family:var(--font-mono);font-size:13px;color:var(--accent);margin-right:6px}
+.rec{border-left:3px solid var(--accent);padding:6px 12px;background:var(--accent-soft);border-radius:0 6px 6px 0}
+.rec b{font-size:12px;letter-spacing:.06em;color:var(--accent);display:block}
+.choices{display:grid;gap:6px}
+.choice{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.choice:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.choice input{margin-top:5px}
+.choice span{min-width:0}
+textarea{width:100%;box-sizing:border-box;min-height:64px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;
+  background:var(--bg);color:var(--fg);font:inherit;resize:vertical}
+textarea:focus-visible,button:focus-visible,.choice:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+label.note{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{padding:9px 18px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--surface);font:inherit;font-weight:600;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:disabled{opacity:.45;cursor:default}
+.status{font-size:13px;color:var(--muted)}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}.status.warn{color:var(--warn)}
+.sticky{position:sticky;bottom:0;background:var(--bg);padding-block:12px;border-top:1px solid var(--line);
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.summary{display:grid;gap:10px}
+.summary li{margin-bottom:4px}
+.fig{margin:0;display:grid;gap:4px;min-width:0}
+.fig img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;background:#fff}
+.fig figcaption{font-size:13px;color:var(--muted)}
+.choice .fig{margin-top:6px}
+.notify{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;padding:8px 12px;border:1px dashed var(--line);border-radius:6px}
+@media (prefers-reduced-motion:no-preference){.q{transition:border-color .15s}}
+</style>
+
+<main id="root" aria-live="polite">
+  <header>
+    <h1 id="topic">__TITLE__</h1>
+    <span class="chip waiting" id="chip">読み込み中</span>
+  </header>
+  <p class="muted">質問票を読み込んでいます。Claude が最初のラウンドを書き込むとここに表示されます。</p>
+</main>
+<!-- Claude への合図コメントのアンカー。#root は配信のたびに作り直されるため、その外に固定で置く -->
+<p id="thread-anchor" class="muted" style="max-width:760px;margin:24px auto 0;font-size:12px">回答の送信記録は、このページのコメントとして残ります。</p>
+
+<script>
+(async () => {
+  const root = document.getElementById('root');
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // 質問文は Claude が書く軽量 Markdown（段落・箇条書き・`code`・**bold**）。
+  // ライブラリを入れるほどの表現力は要らないので、エスケープ後に最小限だけ変換する
+  const inline = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  const md = (text) => String(text ?? '').trim().split(/\n{2,}/).map((block) => {
+    const lines = block.split('\n');
+    if (lines.every((l) => /^\s*[-*] /.test(l))) return '<ul>' + lines.map((l) => '<li>' + inline(l.replace(/^\s*[-*] /, '')) + '</li>').join('') + '</ul>';
+    return '<p>' + lines.map(inline).join('<br>') + '</p>';
+  }).join('');
+
+  // 図は db に入った SVG 文字列を img の data URI で出す。db は閲覧者も書けるので、
+  // innerHTML に直接入れずスクリプトが動かない img 経由にしている
+  // img に読み込まれた SVG にはページのテーマが届かず、ダーク判定がページの明示テーマとずれうる。
+  // そのため図は白地に固定し、SVG はライト配色だけで描く前提にしている
+  const svgSrc = (svg) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  const fig = (dg) => dg?.svg
+    ? `<figure class="fig"><img alt="${esc(dg.alt || dg.caption || '図')}" src="${svgSrc(dg.svg)}">${dg.caption ? `<figcaption>${esc(dg.caption)}</figcaption>` : ''}</figure>`
+    : '';
+  // 選択肢の label 内には figure（flow content）を置けないので span で出す。
+  // alt は空にして、ラジオの読み上げ名が図の説明で長くならないようにする
+  const figInline = (dg) => dg?.svg
+    ? `<span class="fig"><img alt="" src="${svgSrc(dg.svg)}">${dg.caption ? `<span class="muted">${esc(dg.caption)}</span>` : ''}</span>`
+    : '';
+
+  const [db, comments, perms] = await Promise.all(['db', 'comments', 'permissions'].map((n) => window.claude?.use?.(n)));
+  if (!db) {
+    root.innerHTML = `<header><h1>${esc(document.title)}</h1><span class="chip done">読み込めません</span></header>
+      <p class="status err">このビューでは質問票のデータを読めません。claude.ai にサインインした状態で開いてください。</p>`;
+    return;
+  }
+
+  let meta = null;
+  let rounds = [];
+  // 入力途中の回答。再描画で消えないよう JS 側に持ち、リロード対策に localStorage にも退避する
+  const drafts = {};
+  const draftKey = (rid) => 'grill-draft:' + rid;
+  const loadDraft = (rid) => { try { return JSON.parse(localStorage.getItem(draftKey(rid)) || '{}'); } catch { return {}; } };
+  const saveDraft = (rid) => { try { localStorage.setItem(draftKey(rid), JSON.stringify(drafts[rid] || {})); } catch {} };
+  let sending = false;
+  // 送信結果の案内。db の配信で画面を作り直しても消えないよう、DOM ではなく状態として持つ。
+  // scope はどの画面に属する案内か（ラウンド id か 'final'）で、別のラウンドに移ったら表示しない
+  let notice = null;
+  let fatal = null;
+  let stale = false;
+  let lastKey = null;
+  // Claude への自動通知が使えるか。コメント投稿の許可は artifact ごとに最初の書き込み時にしか聞かれず
+  // （事前に求める手段が無い）、そこで閉じると同じページ読み込み中は再び聞けない。送信前に案内しておく
+  let notifyState = null; // 'ready' | 'prompt' | 'denied' | 'no_session' | 'unsupported'
+  let notifyMsg = null;
+  let notifySeq = 0;
+  // 確認画面の自由記述。通知状態の変化などで画面を作り直しても消えないよう状態として持つ
+  let finalDraft = '';
+
+  const answerText = (q, a) => {
+    if (!a) return '—';
+    const main = a.choice === 'recommended' ? '推奨どおり: ' + q.recommended
+      : a.choice === 'option' ? a.option
+      : a.choice === 'other' ? 'その他'
+      : '—';
+    return a.note ? main + ' ／ ' + a.note : main;
+  };
+
+  const current = () => {
+    const open = rounds.filter((r) => !r.data().answers);
+    return open.length ? open[open.length - 1] : null;
+  };
+  const lastAnswered = () => {
+    const done = rounds.filter((r) => r.data().answers);
+    return done.length ? done[done.length - 1] : null;
+  };
+
+  function isComplete(rid, d) {
+    const qs = d.questions || [];
+    return qs.length > 0 && qs.every((q) => {
+      const a = drafts[rid]?.[q.id];
+      if (!a?.choice) return false;
+      // ラウンドが書き換えられて選択肢の文言が変わった場合、古い選択を有効扱いにしない
+      if (a.choice === 'option') return Array.isArray(q.options) && q.options[a.optionIndex] === a.option;
+      return a.choice !== 'other' || (a.note || '').trim().length > 0;
+    });
+  }
+
+  // ---- 描画 ----
+  // 画面の構成を変える要素だけからキーを作り、変わらない配信では作り直さない。
+  // 作り直すと入力中の textarea のフォーカスや IME 変換、details の開閉が失われるため
+  function viewKey() {
+    const cur = current();
+    return JSON.stringify({
+      status: meta?.status, topic: meta?.topic, summary: meta?.summary, note: meta?.conclusionNote,
+      fb: !!meta?.finalFeedback, cur: cur ? [cur.id, cur.data().questions, cur.data().preface] : null,
+      done: rounds.filter((r) => r.data().answers).map((r) => [r.id, r.data().answers]),
+      notice: notice && [notice.scope, notice.text, notice.retry], fatal, stale, sending, notifyState, notifyMsg,
+      diagrams: [cur?.data().prefaceDiagram, meta?.summaryDiagram],
+    });
+  }
+
+  function render() {
+    const key = viewKey();
+    if (key === lastKey) return;
+    lastKey = key;
+
+    const status = meta?.status ?? 'asking';
+    const banner = fatal ? `<p class="status err">${esc(fatal)}</p>`
+      : stale ? '<p class="status warn">データにまだ接続できていません。表示が古い可能性があります。しばらく待つか、ページを開き直してください。</p>' : '';
+    const head = (kind, label) => `<header><h1>${esc(meta?.topic || document.title)}</h1><span class="chip ${kind}">${esc(label)}</span></header>${banner}${status === 'done' ? '' : renderNotifyBar()}`;
+
+    if (status === 'done') {
+      root.innerHTML = head('done', '確定済み') + renderSummary(false) + renderLog();
+      return;
+    }
+    if (status === 'concluding') {
+      const fb = meta?.finalFeedback;
+      root.innerHTML = head(fb ? 'waiting' : 'concluding', fb ? 'Claude が確認中' : '合意内容の確認') + renderSummary(!fb) + renderLog();
+      return;
+    }
+    const cur = current();
+    if (!cur) {
+      const la = lastAnswered();
+      root.innerHTML = head('waiting', rounds.length ? 'Claude が考え中' : '準備中') + renderLog()
+        + `<p class="muted">${rounds.length ? 'Claude が回答を読んで、次の質問を準備しています。このページは自動で更新されます。' : 'Claude が最初のラウンドを準備しています。'}</p>`
+        + (sending ? '<p class="status">送信中…</p>' : renderNotice(la?.id));
+      return;
+    }
+    const d = cur.data();
+    const rid = cur.id;
+    if (!drafts[rid]) drafts[rid] = loadDraft(rid);
+    root.innerHTML = head('asking', '回答待ち') + renderLog() + `
+      <section class="prose" data-round="${esc(rid)}">
+        <h2>Round ${esc(d.n)} — ${esc(d.questions?.length ?? 0)} 問</h2>
+        ${d.preface || d.prefaceDiagram ? `<div class="preface prose">${md(d.preface)}${fig(d.prefaceDiagram)}</div>` : ''}
+      </section>
+      ${(d.questions || []).map((q) => renderQuestion(rid, q)).join('')}
+      <div class="sticky bar">
+        <button id="send" ${isComplete(rid, d) && !sending ? '' : 'disabled'}>回答を送信</button>
+        <button class="ghost" id="accept-all" ${sending ? 'disabled' : ''}>未回答をすべて推奨どおりにする</button>
+        ${sending ? '<span class="status">送信中…</span>' : renderNotice(rid, true)}
+      </div>`;
+  }
+
+  function renderNotifyBar() {
+    const msg = notifyMsg ? `<span class="status warn">${esc(notifyMsg)}</span>` : '';
+    if (notifyState === 'prompt') return `<div class="notify"><span>最初の送信時に「コメントの投稿を許可するか」を聞かれます。許可すると、送信のたびに Claude へ自動で知らせます。</span>${msg}</div>`;
+    if (notifyState === 'denied') return `<div class="notify"><span class="status warn">自動通知が許可されていません。送信後はターミナルで「回答した」と伝えるか、権限設定（コメントパネルの設定も含む）で許可してください。</span><button class="ghost" id="manage-perms">権限設定を開く</button>${msg}</div>`;
+    if (notifyState === 'no_session') return `<div class="notify"><span class="status warn">受け取れる Claude セッションが見つからない可能性があります。送信後に通知できなかった場合は、ターミナルで「回答した」と伝えてください。</span></div>`;
+    if (notifyState === 'unsupported') return `<div class="notify"><span class="status warn">このビューからは Claude に自動通知できません。送信後はターミナルで「回答した」と伝えてください。</span></div>`;
+    return '';
+  }
+
+  function renderNotice(scope, inline = false) {
+    if (!notice || notice.scope !== scope) return '';
+    const tag = inline ? 'span' : 'p';
+    return `<${tag} class="status ${notice.kind}">${esc(notice.text)}</${tag}>`
+      + (notice.retry ? ' <button class="ghost" id="renotify">Claude に通知する</button>' : '');
+  }
+
+  function renderLog() {
+    const done = rounds.filter((r) => r.data().answers);
+    if (!done.length) return '';
+    return `<section class="log"><h2>これまでの決定</h2>${done.map((r) => {
+      const d = r.data();
+      return `<details><summary>Round ${esc(d.n)}（${esc(d.questions?.length ?? 0)} 問）</summary><dl>${
+        (d.questions || []).map((q) => `<dt>${esc(q.id)}</dt><dd><b>${esc(q.title)}</b><br>${esc(answerText(q, d.answers?.[q.id]))}</dd>`).join('')
+      }</dl></details>`;
+    }).join('')}</section>`;
+  }
+
+  function renderQuestion(rid, q) {
+    const a = drafts[rid]?.[q.id] || {};
+    const name = `${rid}-${q.id}`;
+    const opts = Array.isArray(q.options) ? q.options : [];
+    const optDiagrams = Array.isArray(q.optionDiagrams) ? q.optionDiagrams : [];
+    const radio = (value, label, checked, idx) =>
+      `<label class="choice"><input type="radio" name="${esc(name)}" value="${value}" ${idx !== undefined ? `data-opt="${idx}"` : ''} ${checked ? 'checked' : ''}><span>${inline(label)}${idx !== undefined ? figInline(optDiagrams[idx]) : ''}</span></label>`;
+    return `<article class="q ${a.choice ? 'answered' : ''}" data-qid="${esc(q.id)}">
+      <h3><span class="qid">${esc(q.id)}</span>${esc(q.title)}</h3>
+      <div class="prose">${md(q.body)}</div>
+      ${fig(q.diagram)}
+      <div class="rec"><b>推奨</b>${inline(q.recommended)}</div>
+      <div class="choices" role="radiogroup" aria-label="${esc(q.id)} の回答">
+        ${radio('recommended', '推奨どおりでよい', a.choice === 'recommended')}
+        ${opts.map((o, i) => radio('option', o, a.choice === 'option' && a.optionIndex === i && a.option === o, i)).join('')}
+        ${radio('other', 'その他（下の補足欄に書く）', a.choice === 'other')}
+      </div>
+      <label class="note">補足・質問・反論（任意。「その他」のときは必須）
+        <textarea id="note-${esc(name)}" data-note="${esc(q.id)}" maxlength="2000">${esc(a.note ?? '')}</textarea>
+      </label>
+    </article>`;
+  }
+
+  function renderSummary(interactive) {
+    const items = Array.isArray(meta?.summary) ? meta.summary : [];
+    const fb = meta?.finalFeedback;
+    const list = `<ul>${items.map((s) => `<li><b>${esc(s.title)}</b>: ${inline(s.decision)}</li>`).join('')}</ul>`;
+    const note = (meta?.conclusionNote ? `<div class="prose">${md(meta.conclusionNote)}</div>` : '') + fig(meta?.summaryDiagram);
+    if (!interactive) {
+      const sent = fb ? `<p class="muted">${fb.confirmed ? 'この内容で確定として保存しました。' : '追加で詰めたい点を保存しました。'}</p>` : '';
+      return `<section class="summary"><h2>合意した内容</h2>${note}${list}${sent}${renderNotice('final')}</section>`;
+    }
+    return `<section class="summary"><h2>合意した内容</h2>${note}${list}
+      <label class="note">まだ詰めたい点・修正したい点・補足（あれば）
+        <textarea id="final-note" maxlength="4000">${esc(finalDraft)}</textarea>
+      </label>
+      <div class="bar">
+        <button id="confirm" ${sending ? 'disabled' : ''}>この内容で確定</button>
+        <button class="ghost" id="more" ${sending ? 'disabled' : ''}>この点を詰めたい</button>
+        ${sending ? '<span class="status">送信中…</span>' : renderNotice('final', true)}
+      </div></section>`;
+  }
+
+  // ---- Claude への通知 ----
+  // 回答は db に保存し、Claude への合図はコメント（sendToClaude）で送る。
+  // コメントは 4KiB 上限で回答本文を載せきれないため、合図には短い文だけを載せる。
+  // 呼び出し側の都合や拒否理由の別はここで結果コードに畳み、表示文言は explain() で決める
+  const RETRYABLE = new Set(['unavailable', 'upstream_error', 'claude_unavailable', 'rate_limited', 'error']);
+
+  // 失敗時に原因を切り分けられるよう、アンカー取得の失敗も理由つきの結果コードにする
+  async function prepareAnchor(el) {
+    if (!comments) return { error: 'no_comments' };
+    if (!('sendToClaude' in comments)) return { error: 'no_send_to_claude' };
+    try { return { anchor: await comments.anchorFor(el) }; }
+    catch (e) { return { error: 'anchor_' + (e?.code || 'error') }; }
+  }
+
+  // canSendToClaude の答えで送信を止めない。available 以外を返すビューでも sendToClaude 自体は
+  // 通ることがあり、事前確認で打ち切ると通知できる場面まで失う。可否は送信結果のコードで判断する
+  async function notify(prepared, text) {
+    if (prepared.error) return prepared.error;
+    try { await comments.sendToClaude({ anchor: prepared.anchor, text }); return 'sent'; }
+    catch (e) { return e?.code || 'error'; }
+  }
+
+  function explain(result) {
+    if (result === 'sent') return { text: '保存して Claude に通知しました。続きはこのページに自動で表示されます。', kind: 'ok', retry: false };
+    if (result === 'no_session') return { text: '保存しました。受け取れる Claude セッションが見つからないため、ターミナルで「回答した」と伝えてください。', kind: 'warn', retry: false };
+    if (RETRYABLE.has(result)) return { text: `保存しました。Claude への通知に失敗しました（${result}）。もう一度通知するか、ターミナルで「回答した」と伝えてください。`, kind: 'warn', retry: true };
+    // consent_required・forbidden などはこのページ読み込み中に再試行しても通らない。
+    // 原因の切り分けができるよう、結果コードは必ず見せる
+    if (result === 'consent_required') return { text: '保存しました。コメント投稿が許可されなかったため Claude に通知できませんでした。ターミナルで「回答した」と伝えてください。ページを開き直すと、次の送信で再び許可を聞かれます。', kind: 'warn', retry: false };
+    return { text: `保存しました。このページからは Claude に通知できませんでした（${result}）。ターミナルで「回答した」と伝えてください。`, kind: 'warn', retry: false };
+  }
+
+  // 許可状態と受け取り手の有無を確かめ、notifyState に反映する。
+  // canSendToClaude は watch しているセッションを非同期に知るので、許可操作のたびに読み直す
+  async function refreshNotifyState() {
+    // 起動時と送信後で並行して走ることがある。遅れて終わった古い呼び出しで上書きしないよう最新だけ採用する
+    const seq = ++notifySeq;
+    let next;
+    if (!comments || !('sendToClaude' in comments)) next = 'unsupported';  // 送信手段そのものが無いときだけ断定する
+    else {
+      // permissions を取得できないビューでは許可状態を事前に知る手段がない。
+      // その場合は送信時の許可ダイアログに任せ、canSendToClaude の結果だけで判断する
+      let perm = 'granted';
+      try { if (perms) perm = await perms.state('comments'); } catch {}
+      if (perm === 'prompt') next = 'prompt';
+      else if (perm === 'denied') next = 'denied';
+      else {
+        let s;
+        try { s = await comments.canSendToClaude(); } catch { s = null; }
+        next = s === 'no_session' ? 'no_session' : 'ready';
+      }
+    }
+    if (seq !== notifySeq) return;
+    notifyState = next;
+    render();
+  }
+
+  async function saveAndNotify({ scope, write, message }) {
+    if (sending) return;
+    sending = true;
+    notice = null;
+    render();
+    const prepared = await prepareAnchor(document.getElementById('thread-anchor'));
+    try {
+      await write();
+    } catch (e) {
+      sending = false;
+      notice = { scope, text: `保存できませんでした（${e.code ?? e.message}）。もう一度送信してください。`, kind: 'err', retry: false };
+      render();
+      return;
+    }
+    const result = await notify(prepared, message);
+    sending = false;
+    notice = { scope, ...explain(result), prepared, message };
+    render();
+    // 送信時の許可ダイアログで許可・拒否された場合に上部の案内を合わせる
+    refreshNotifyState();
+  }
+
+  async function submitRound() {
+    const cur = current();
+    if (!cur) return;
+    const rid = cur.id;
+    const d = cur.data();
+    if (!isComplete(rid, d)) return;
+    const answers = {};
+    for (const q of d.questions) {
+      const a = drafts[rid][q.id];
+      answers[q.id] = {
+        choice: a.choice,
+        ...(a.choice === 'option' ? { option: a.option } : {}),
+        ...(a.note?.trim() ? { note: a.note.trim() } : {}),
+      };
+    }
+    await saveAndNotify({
+      scope: rid,
+      // 通知より先に db を確定させる。逆順だと、起きた Claude が保存前の db を読む
+      write: () => db.doc('rounds/' + rid).update({ answers, answeredAt: new Date().toISOString() }),
+      message: `Round ${d.n} の回答を送信しました（${d.questions.length} 問）`,
+    });
+    if (notice?.kind !== 'err') { try { localStorage.removeItem(draftKey(rid)); } catch {} }
+  }
+
+  async function submitFinal(confirmed) {
+    const text = finalDraft.trim();
+    if (!confirmed && !text) {
+      notice = { scope: 'final', text: '詰めたい点を入力してください。', kind: 'err', retry: false };
+      render();
+      return;
+    }
+    await saveAndNotify({
+      scope: 'final',
+      write: () => db.doc('meta/session').update({ finalFeedback: { confirmed, text, at: new Date().toISOString() } }),
+      message: confirmed ? '合意内容を確定しました' : '合意内容について追加で詰めたい点を送信しました',
+    });
+  }
+
+  async function renotify() {
+    if (!notice?.retry || sending) return;
+    const { scope, prepared, message } = notice;
+    sending = true;
+    render();
+    const result = await notify(prepared, message);
+    sending = false;
+    notice = { scope, ...explain(result), prepared, message };
+    render();
+    // 送信時の許可ダイアログで許可・拒否された場合に上部の案内を合わせる
+    refreshNotifyState();
+  }
+
+  // ---- 入力 ----
+  // 入力操作では画面を作り直さず、該当箇所だけ更新する（フォーカスを保つため）
+  function refreshSendButton() {
+    const cur = current();
+    const btn = document.getElementById('send');
+    if (cur && btn) btn.disabled = sending || !isComplete(cur.id, cur.data());
+  }
+
+  root.addEventListener('change', (ev) => {
+    const input = ev.target;
+    if (input.type !== 'radio') return;
+    const cur = current(); if (!cur) return;
+    const rid = cur.id;
+    const card = input.closest('.q');
+    const qid = card?.dataset.qid; if (!qid) return;
+    const q = cur.data().questions.find((x) => x.id === qid);
+    const prev = drafts[rid][qid] || {};
+    if (input.value === 'option') {
+      const idx = Number(input.dataset.opt);
+      drafts[rid][qid] = { ...prev, choice: 'option', optionIndex: idx, option: q.options[idx] };
+    } else {
+      const { optionIndex, option, ...rest } = prev;
+      drafts[rid][qid] = { ...rest, choice: input.value };
+    }
+    saveDraft(rid);
+    card.classList.add('answered');
+    refreshSendButton();
+  });
+
+  root.addEventListener('input', (ev) => {
+    if (ev.target.id === 'final-note') { finalDraft = ev.target.value; return; }
+    const qid = ev.target.dataset?.note; if (!qid) return;
+    const cur = current(); if (!cur) return;
+    const rid = cur.id;
+    drafts[rid][qid] = { ...(drafts[rid][qid] || {}), note: ev.target.value };
+    saveDraft(rid);
+    refreshSendButton();
+  });
+
+  root.addEventListener('click', (ev) => {
+    const t = ev.target.closest('button'); if (!t) return;
+    if (t.id === 'send') submitRound();
+    else if (t.id === 'confirm') submitFinal(true);
+    else if (t.id === 'more') submitFinal(false);
+    else if (t.id === 'renotify') renotify();
+    else if (t.id === 'manage-perms') {
+      if (!perms) return;
+      notifyMsg = null;
+      perms.manage().catch(() => {
+        notifyMsg = '権限パネルを開けませんでした。artifact の Permissions メニューか、コメントパネルの設定から許可してください。';
+      }).then(refreshNotifyState);
+    }
+    else if (t.id === 'accept-all') {
+      const cur = current(); if (!cur) return;
+      const rid = cur.id;
+      for (const q of cur.data().questions) {
+        if (drafts[rid][q.id]?.choice) continue;
+        drafts[rid][q.id] = { ...(drafts[rid][q.id] || {}), choice: 'recommended' };
+        const card = root.querySelector(`.q[data-qid="${CSS.escape(q.id)}"]`);
+        const radio = card?.querySelector('input[value="recommended"]');
+        if (radio) radio.checked = true;
+        card?.classList.add('answered');
+      }
+      saveDraft(rid);
+      refreshSendButton();
+    }
+  });
+
+  // ---- 購読 ----
+  // ストアに届かない間はエラーすら来ないことがあるので、10 秒で「古い可能性がある」と知らせる
+  const confirmed = { meta: false, rounds: false };
+  const staleTimer = setTimeout(() => { if (!confirmed.meta || !confirmed.rounds) { stale = true; render(); } }, 10000);
+  const settle = (which, snap) => {
+    if (snap.metadata.fromCache) return;
+    confirmed[which] = true;
+    if (confirmed.meta && confirmed.rounds) { clearTimeout(staleTimer); stale = false; }
+  };
+  // エラーは購読の終了を意味し、以後の更新は届かない。古い表示のまま待たせないよう常に明示する
+  const onErr = (e) => { clearTimeout(staleTimer); fatal = `データの購読が止まりました（${e.code}）。ページを開き直してください。`; render(); };
+  db.doc('meta/session').onSnapshot((snap) => { meta = snap.exists ? snap.data() : null; settle('meta', snap); render(); }, onErr);
+  db.collection('rounds').orderBy('n').onSnapshot((snap) => { rounds = snap.docs; settle('rounds', snap); render(); }, onErr);
+  refreshNotifyState();
+})();
+</script>
