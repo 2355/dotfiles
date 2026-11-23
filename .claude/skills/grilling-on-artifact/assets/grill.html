@@ -32,9 +32,19 @@ ul{margin:0;padding-left:1.3em}
 .preface{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
 .log details{border-top:1px solid var(--line);padding-block:8px}
 .log summary{cursor:pointer;font-weight:600}
-.log dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:8px 0 0}
-.log dt{color:var(--muted);font-family:var(--font-mono);font-size:13px}
-.log dd{margin:0;min-width:0}
+.log .entries{display:grid;gap:10px;margin-top:10px}
+.entry{display:grid;gap:6px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px;min-width:0}
+.entry-q{font-weight:600}
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:baseline}
+.tag{font-size:12px;font-weight:600;padding:0 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+/* 補足（ユーザ）と回答（Claude）は話者の違いが一目で分かるよう、引用線の色と見出しで分ける */
+.replies{display:grid;gap:12px}
+.qa{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.qa-head{font-size:13px;color:var(--muted)}
+.said{display:grid;gap:4px;padding:6px 12px;border-left:3px solid var(--line);min-width:0}
+.said.reply{border-left-color:var(--ok)}
+.said > b{font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.said.reply > b{color:var(--ok)}
 .q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px}
 .q.answered{border-color:var(--accent)}
 .qid{font-family:var(--font-mono);font-size:13px;color:var(--accent);margin-right:6px}
@@ -134,14 +144,38 @@ button:disabled{opacity:.45;cursor:default}
   // 確認画面の自由記述。通知状態の変化などで画面を作り直しても消えないよう状態として持つ
   let finalDraft = '';
 
-  const answerText = (q, a) => {
-    if (!a) return '—';
-    const main = a.choice === 'recommended' ? '推奨どおり: ' + q.recommended
-      : a.choice === 'option' ? a.option
-      : a.choice === 'other' ? 'その他'
-      : '—';
-    return a.note ? main + ' ／ ' + a.note : main;
+  // 選んだ種類をタグ、採用した中身を本文に分ける。1 行に連結すると長い推奨文と補足が区別できなくなるため
+  const verdict = (q, a) => {
+    if (!a) return '<div class="verdict"><span class="tag">未回答</span><span></span></div>';
+    const [tag, body] = a.choice === 'recommended' ? ['推奨どおり', inline(q.recommended)]
+      : a.choice === 'option' ? ['選択', inline(a.option)]
+      : a.choice === 'other' ? ['その他', '<span class="muted">補足を参照</span>']
+      : ['—', ''];
+    return `<div class="verdict"><span class="tag">${tag}</span><span>${body}</span></div>`;
   };
+
+  // replies は Claude が書くが db は閲覧者も書き換えられる。継承プロパティ（constructor など）や
+  // 文字列以外の値を表示しないよう、自前の文字列だけを返答として扱う
+  const replyOf = (d, qid) => {
+    const r = d?.replies;
+    return r && typeof r === 'object' && !Array.isArray(r) && Object.hasOwn(r, qid) && typeof r[qid] === 'string' ? r[qid] : '';
+  };
+  const exchange = (a, reply) =>
+    (a?.note ? `<div class="said ask"><b>あなたの補足</b><div class="prose">${md(a.note)}</div></div>` : '')
+    + (reply ? `<div class="said reply"><b>Claude の回答</b><div class="prose">${md(reply)}</div></div>` : '');
+
+  // 回答済みラウンドのうち、Claude が返答を書いた質問だけをカードにする。
+  // 補足欄の質問への答えを次の画面の冒頭に出し、どの質問への答えかを見失わせないため
+  function renderReplies(r) {
+    const d = r?.data();
+    const qs = (d?.questions || []).filter((q) => replyOf(d, q.id));
+    if (!qs.length) return '';
+    return `<section class="replies"><h2>Round ${esc(d.n)} の補足への回答</h2>${qs.map((q) => `
+      <article class="qa">
+        <div class="qa-head"><span class="qid">${esc(q.id)}</span>${esc(q.title)}</div>
+        ${exchange(d.answers?.[q.id], replyOf(d, q.id))}
+      </article>`).join('')}</section>`;
+  }
 
   const current = () => {
     const open = rounds.filter((r) => !r.data().answers);
@@ -171,7 +205,7 @@ button:disabled{opacity:.45;cursor:default}
     return JSON.stringify({
       status: meta?.status, topic: meta?.topic, summary: meta?.summary, note: meta?.conclusionNote,
       fb: !!meta?.finalFeedback, cur: cur ? [cur.id, cur.data().questions, cur.data().preface] : null,
-      done: rounds.filter((r) => r.data().answers).map((r) => [r.id, r.data().answers]),
+      done: rounds.filter((r) => r.data().answers).map((r) => [r.id, r.data().answers, r.data().replies]),
       notice: notice && [notice.scope, notice.text, notice.retry], fatal, stale, sending, notifyState, notifyMsg,
       diagrams: [cur?.data().prefaceDiagram, meta?.summaryDiagram],
     });
@@ -193,7 +227,7 @@ button:disabled{opacity:.45;cursor:default}
     }
     if (status === 'concluding') {
       const fb = meta?.finalFeedback;
-      root.innerHTML = head(fb ? 'waiting' : 'concluding', fb ? 'Claude が確認中' : '合意内容の確認') + renderSummary(!fb) + renderLog();
+      root.innerHTML = head(fb ? 'waiting' : 'concluding', fb ? 'Claude が確認中' : '合意内容の確認') + renderReplies(lastAnswered()) + renderSummary(!fb) + renderLog();
       return;
     }
     const cur = current();
@@ -207,7 +241,9 @@ button:disabled{opacity:.45;cursor:default}
     const d = cur.data();
     const rid = cur.id;
     if (!drafts[rid]) drafts[rid] = loadDraft(rid);
-    root.innerHTML = head('asking', '回答待ち') + renderLog() + `
+    // 直前のラウンドの返答は、決定ログに畳むと読まれないので新しい質問の手前に出す
+    const prev = rounds.filter((r) => r.data().answers && r.data().n < d.n).pop();
+    root.innerHTML = head('asking', '回答待ち') + renderLog() + renderReplies(prev) + `
       <section class="prose" data-round="${esc(rid)}">
         <h2>Round ${esc(d.n)} — ${esc(d.questions?.length ?? 0)} 問</h2>
         ${d.preface || d.prefaceDiagram ? `<div class="preface prose">${md(d.preface)}${fig(d.prefaceDiagram)}</div>` : ''}
@@ -241,9 +277,13 @@ button:disabled{opacity:.45;cursor:default}
     if (!done.length) return '';
     return `<section class="log"><h2>これまでの決定</h2>${done.map((r) => {
       const d = r.data();
-      return `<details><summary>Round ${esc(d.n)}（${esc(d.questions?.length ?? 0)} 問）</summary><dl>${
-        (d.questions || []).map((q) => `<dt>${esc(q.id)}</dt><dd><b>${esc(q.title)}</b><br>${esc(answerText(q, d.answers?.[q.id]))}</dd>`).join('')
-      }</dl></details>`;
+      return `<details><summary>Round ${esc(d.n)}（${esc(d.questions?.length ?? 0)} 問）</summary><div class="entries">${
+        (d.questions || []).map((q) => `<div class="entry">
+          <div class="entry-q"><span class="qid">${esc(q.id)}</span>${esc(q.title)}</div>
+          ${verdict(q, d.answers?.[q.id])}
+          ${exchange(d.answers?.[q.id], replyOf(d, q.id))}
+        </div>`).join('')
+      }</div></details>`;
     }).join('')}</section>`;
   }
 
