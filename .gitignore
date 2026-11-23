@@ -11,3 +11,6 @@
 # SKILL.md を Orca 自身が黙って上書きするため、追跡すると差分が出続ける。
 # 配布元の記録は .agents/.skill-lock.json に残している。
 .agents/skills/orca-cli/
+
+# Serena MCP がリポジトリを開いたときに自動生成するプロジェクト設定とキャッシュ。
+.serena/
