@@ -60,7 +60,7 @@ Skill ツールで `mattpocock-skills:grilling` を呼び出す。質問の作�
 1. テンプレートをスクラッチパッドにコピーし、`__TITLE__` を議題名に置き換える。議題名は 2〜4 語程度の名前にする（例: `認証基盤の移行方針`）。ファイル名は議題ごとに変える。同じパスで publish すると前の質問票を上書きしてしまうため。
    ```bash
    mkdir -p <scratchpad>/grilling-on-artifact
-   sed 's/__TITLE__/認証基盤の移行方針/g' <このスキルのディレクトリ>/assets/grill.html > <scratchpad>/grilling-on-artifact/auth-migration.html
+   sed 's/__TITLE__/認証基盤の移行方針/g' ${CLAUDE_SKILL_DIR}/assets/grill.html > <scratchpad>/grilling-on-artifact/auth-migration.html
    ```
    置換先は HTML の `<title>` と `<h1>` なので、議題名からは `< > & " '` と sed の区切り文字 `/` を取り除いておく。見出しは後で `meta/session.topic` の値で描き直されるが、`<title>` は置換した文字列がそのまま残る。
 2. Artifact ツールで publish する。
