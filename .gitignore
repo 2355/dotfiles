@@ -6,3 +6,8 @@
 # skill の自動同期などで削除された skill の退避先。
 # 自作の skill ではなく、ツールが自動生成する一時的なものなので追跡しない。
 .claude/skills/.trash/
+
+# Orca アプリが同梱する orca-cli skill。Orca が更新されるたびに、手を加えていない
+# SKILL.md を Orca 自身が黙って上書きするため、追跡すると差分が出続ける。
+# 配布元の記録は .agents/.skill-lock.json に残している。
+.agents/skills/orca-cli/
