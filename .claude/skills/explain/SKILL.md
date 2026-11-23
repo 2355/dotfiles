@@ -1,6 +1,6 @@
 ---
 name: explain
-description: GitHub URL を受け取り、該当コードが何をしているかを説明する。まずローカルファイルを確認し、存在しない場合のみ GitHub から取得する。
+description: GitHub URL を受け取り、該当コードが何をしているかを説明する。まずローカルファイルを確認し、存在しない場合のみ GitHub から取得する。GitHub のコード URL を渡されて、そのコードの説明を求められた場合に使用する。
 argument-hint: <github-url>
 ---
 

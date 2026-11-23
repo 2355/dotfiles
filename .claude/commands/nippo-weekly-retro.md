@@ -1,3 +1,7 @@
+---
+description: 指定週（省略時は先週）の日報・GitHub PR・Jira issue を集約し、KPT 形式の週次振り返りを ~/work/nippo/{週の月曜}-week.md に書き出し、承認後に commit & push する。週次振り返りの作成を依頼された場合に使用する。
+---
+
 # 週次振り返り（KPT）を作成する
 
 先週月曜〜日曜の `~/work/nippo/` の日報・GitHub PR・Jira issue を集約し、KPT（Keep / Problem / Try）形式の振り返りを `~/work/nippo/{先週月曜の日付}-week.md` に書き出す。

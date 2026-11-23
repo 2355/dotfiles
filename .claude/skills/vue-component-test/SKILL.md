@@ -1,6 +1,6 @@
 ---
 name: vue-component-test
-description: Vue コンポーネントのテストを作成する。ブラックボックステストの原則に従い、ユーザー視点でのテストを書く。
+description: Vue コンポーネントのテストを作成する。ブラックボックステストの原則に従い、ユーザー視点でのテストを書く。Vue コンポーネントのテスト作成を依頼された場合に使用する。
 argument-hint: [component-path]
 ---
 

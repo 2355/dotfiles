@@ -34,7 +34,7 @@ context: fork
 `$ARGUMENTS` を解析し、Bash で以下のように実行する:
 
 ```bash
-python ~/.claude/skills/prompt-review/scripts/collect.py [OPTIONS] > /tmp/prompt-review-data.json
+python ${CLAUDE_SKILL_DIR}/scripts/collect.py [OPTIONS] > /tmp/prompt-review-data.json
 ```
 
 - 引数なし → オプションなし（デフォルト: 過去7日分）
@@ -43,7 +43,7 @@ python ~/.claude/skills/prompt-review/scripts/collect.py [OPTIONS] > /tmp/prompt
 - 文字列のみ（例: `yonshogen`） → `--project yonshogen`
 - 文字列 + 数値（例: `yonshogen 30`） → `--project yonshogen --days 30`
 
-**重要**: スクリプトのパスは、このスキルファイルからの相対パスではなく、スキルが格納されているプロジェクトの `.claude/skills/prompt-review/scripts/collect.py` の絶対パスを使うこと。現在の作業ディレクトリ（`cwd`）を基準に `.claude/skills/prompt-review/scripts/collect.py` を指定する。
+**重要**: スクリプトのパスは、現在の作業ディレクトリ（`cwd`）からの相対パスではなく、上記コマンドのとおり、このスキルのディレクトリの絶対パスを使うこと。
 
 ### 出力の読み取り
 

@@ -113,6 +113,5 @@
   "skipWorkflowUsageWarning": true,
   "theme": "auto",
   "remoteControlAtStartup": true,
-  "agentPushNotifEnabled": true,
-  "voiceEnabled": true
+  "agentPushNotifEnabled": true
 }

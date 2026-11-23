@@ -17,7 +17,7 @@ argument-hint: "[YYYY-MM-DD]"
 スクリプトで、ユーザ発言（AskUserQuestion への回答を含む）と Claude のテキスト応答だけを抜き出す。生の JSONL は大半が tool_result で、直接読むとコンテキストを圧迫するため、JSONL を Read してはいけない。
 
 ```bash
-~/.claude/skills/extract-learnings/scripts/extract.sh <対象日> <出力先>
+${CLAUDE_SKILL_DIR}/scripts/extract.sh <対象日> <出力先>
 ```
 
 - 出力先は、scratchpad ディレクトリがあれば `<scratchpad>/extract-learnings/<対象日>`、なければ省略する（一時ディレクトリが作られる）
